@@ -1,0 +1,4 @@
+﻿  main.cpp
+D:\File\Visual Studio Project\Daigaku\Cpp_Daigaku_Study\Daigaku\Header.h(177,10): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
+D:\File\Visual Studio Project\Daigaku\Cpp_Daigaku_Study\Daigaku\Header.h(178,14): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Daigaku.vcxproj -> D:\File\Visual Studio Project\Daigaku\Cpp_Daigaku_Study\Debug\Daigaku.exe
