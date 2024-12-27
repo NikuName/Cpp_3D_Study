@@ -1,4 +1,4 @@
-#include <iostream>
+Ôªø#include <iostream>
 #include <string>
 #include <random>
 #include <conio.h>
@@ -28,6 +28,28 @@ Render::Render()
 	ConsoleCursor.bVisible = 0;
 	ConsoleCursor.dwSize = 1;
 	SetConsoleCursorInfo(hConsole, &ConsoleCursor);
+
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(hConsole, &csbi);
+	COORD bufferSize = { SCREEN_WIDTH*2, SCREEN_HEIGHT };
+	SetConsoleScreenBufferSize(hConsole, bufferSize);
+
+	CONSOLE_FONT_INFOEX cfi = { sizeof(CONSOLE_FONT_INFOEX) };
+	GetCurrentConsoleFontEx(hConsole, FALSE, &cfi);
+
+	wcscpy_s(cfi.FaceName, L"Consolas");
+	cfi.dwFontSize.Y = 18;  // Í∏ÄÏûê ÌÅ¨Í∏∞ ÏÑ§Ï†ï (ÏõêÌïòÎäî ÌÅ¨Í∏∞Î°ú Ï°∞Ï†ï Í∞ÄÎä•)
+
+	SetCurrentConsoleFontEx(hConsole, FALSE, &cfi);
+
+	for (int i = 0; i < SCREEN_WIDTH; i++)
+		for (int j = 0; j < SCREEN_HEIGHT; j++)
+			tempDepthBuffer[i][j] = 1;
+}
+
+void Render::Init()
+{
+
 }
 
 void Render::setCursorPosition(int x, int y)
@@ -60,10 +82,14 @@ void Render::cls()
 }
 
 /*
-*	√÷¡æ¿˚¿∏∑Œ »≠∏Èø° ∑ª¥ı∏µ
+*	ÏµúÏ¢ÖÏ†ÅÏúºÎ°ú ÌôîÎ©¥Ïóê Î†åÎçîÎßÅ
 */
 void Render::Rendering()
 {
+	for (int i = 0; i < SCREEN_WIDTH; i++)
+		for (int j = 0; j < SCREEN_HEIGHT; j++)
+			tempDepthBuffer[i][j] = 1;
+
 	for (int i = 0; i < Singleton::world->objects->size(); i++)
 	{
 		MeshRenderer* MR = (*(Singleton::world->objects))[i]->GetComponent<MeshRenderer>();
@@ -75,7 +101,7 @@ void Render::Rendering()
 		tempConsoleLineData[y] = "";
 		for (int x = 0; x < SCREEN_WIDTH; ++x)
 		{
-			const char* ch = Singleton::pixels[(y * SCREEN_WIDTH) + x].isEnable ? "°·" : "°°";
+			const char* ch = Singleton::pixels[(y * SCREEN_WIDTH) + x].isEnable ? "‚ñà" : "„ÄÄ"; // ‚ñà,„ÄÄ
 			tempConsoleLineData[y] += ch;
 			Singleton::pixels[(y * SCREEN_WIDTH) + x].isEnable = false;
 		}
@@ -85,13 +111,13 @@ void Render::Rendering()
 	std::cout.flush();
 }
 
-void Render::lineBresenham(vector<float2>* lists, int x0, int y0, int x1, int y1) // ∫Í∑π¡®«Ë æÀ∞Ì∏Æ¡Ú
+void Render::lineBresenham(vector<float2>* lists, int x0, int y0, int x1, int y1) // Î∏åÎ†àÏ††Ìóò ÏïåÍ≥†Î¶¨Ï¶ò
 {
 	int dy = y1 - y0;
 	int dx = x1 - x0;
 	int stepx, stepy;
 	if (dy < 0)
-	{                                 // ±‚øÔ±‚∏¶ æÁºˆ√≥∏Æ«‘
+	{                                 // Í∏∞Ïö∏Í∏∞Î•º ÏñëÏàòÏ≤òÎ¶¨Ìï®
 		dy = -dy;
 		stepy = -1;
 	}
@@ -105,18 +131,18 @@ void Render::lineBresenham(vector<float2>* lists, int x0, int y0, int x1, int y1
 	}
 	else
 		stepx = 1;
-	dy <<= 1;                                     // dy*2 øÕ ∞∞¿∫ ¿«πÃ(∫Ò∆Æø¨ªÍ)
-	dx <<= 1;                                     // dx*2 øÕ ∞∞¿∫ ¿«πÃ(∫Ò∆Æø¨ªÍ)
-	lists->push_back({ (float)x0, (float)y0 });                         // Ω¥µµ ∏ﬁº“µÂ
+	dy <<= 1;                                     // dy*2 ÏôÄ Í∞ôÏùÄ ÏùòÎØ∏(ÎπÑÌä∏Ïó∞ÏÇ∞)
+	dx <<= 1;                                     // dx*2 ÏôÄ Í∞ôÏùÄ ÏùòÎØ∏(ÎπÑÌä∏Ïó∞ÏÇ∞)
+	lists->push_back({ (float)x0, (float)y0 });                         // ÏäàÎèÑ Î©îÏÜåÎìú
 	if (dx > dy) {
-		int fraction = dy - (dx >> 1);     // dx>>1 ¿∫ dx/2øÕ ∞∞¿∫ ¿«πÃ(∫Ò∆Æø¨ªÍ)
+		int fraction = dy - (dx >> 1);     // dx>>1 ÏùÄ dx/2ÏôÄ Í∞ôÏùÄ ÏùòÎØ∏(ÎπÑÌä∏Ïó∞ÏÇ∞)
 		while (x0 != x1) {
 			if (fraction >= 0) {
 				y0 += stepy;
-				fraction -= dx;                 // fraction -= 2*dx ∞˙ ∞∞¿∫ ¿«πÃ
+				fraction -= dx;                 // fraction -= 2*dx Í≥º Í∞ôÏùÄ ÏùòÎØ∏
 			}
 			x0 += stepx;
-			fraction += dy;                     // fraction -= 2*dy ∞˙ ∞∞¿∫ ¿«πÃ
+			fraction += dy;                     // fraction -= 2*dy Í≥º Í∞ôÏùÄ ÏùòÎØ∏
 			lists->push_back({ (float)x0, (float)y0 });
 		}
 	}

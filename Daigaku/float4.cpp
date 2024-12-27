@@ -10,9 +10,6 @@
 #include <Eigen/Dense>
 #include "Header.h"
 
-using Eigen::MatrixXd;
-using Eigen::VectorXd;
-
 using namespace std;
 
 

@@ -8,13 +8,7 @@
 #include <thread>
 #include <chrono>
 #include <string>
-#include <Eigen/Core>
 #include "Header.h"
-
-using Eigen::MatrixXd;
-using Eigen::VectorXd;
-
-using namespace std;
 
 /*
 *	2020. 11. 07

@@ -8,16 +8,17 @@
 #include <thread>
 #include <chrono>
 #include <string>
+
 #include <Eigen/Dense>
-
-
-#define D2R 0.0174532f
-#define R2D 57.295779f
 
 using namespace std;
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+
+
+#define D2R 0.0174532f
+#define R2D 57.295779f
 
 class Transform;
 class Render;
@@ -226,8 +227,10 @@ class Render
 public:
 	void setCursorPosition(int x, int y);
 	Render();
+	void Init();
 	void cls();
 	string tempConsoleLineData[SCREEN_HEIGHT];
+	float tempDepthBuffer[SCREEN_WIDTH][SCREEN_HEIGHT];
 	int i = 0;
 	HWND consoleWindow;
 	HDC consoleDC;
